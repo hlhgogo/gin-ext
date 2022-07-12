@@ -61,6 +61,7 @@ func WarnMapWithTrace(ctx context.Context, infos map[string]interface{}, format 
 // ErrorWithTrace Error增加traceId
 func ErrorWithTrace(ctx context.Context, err error, format string, args ...interface{}) {
 	fields := getTraceField(ctx)
+	fields["msg"] = err.Error()
 	switch err := err.(type) {
 	case *errors.Error:
 		fields["stack"] = err.ErrorStack()
@@ -78,6 +79,7 @@ func ErrorWithTrace(ctx context.Context, err error, format string, args ...inter
 // ErrorMapWithTrace error增加map信息到日志
 func ErrorMapWithTrace(ctx context.Context, infos map[string]interface{}, err error, format string, args ...interface{}) {
 	fields := getTraceField(ctx)
+	fields["msg"] = err.Error()
 	for k, v := range infos {
 		fields[k] = v
 	}
