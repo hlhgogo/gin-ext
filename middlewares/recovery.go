@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-// PageNotFound 404 page handle
+// PageNotFound 404PageHandle
 func PageNotFound(c *gin.Context) {
 	extend.SendData(c, nil, errors.NewErrNotFoundError())
 }

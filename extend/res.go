@@ -105,7 +105,12 @@ func SendData(ctx *gin.Context, resData interface{}, pErr error) {
 
 	// 记录错误并上报
 	if pErr != nil {
-		log.ErrorWithTrace(ctx.Request.Context(), pErr, "Program Panic")
+		if stack, ok := ctx.Get("Stack"); ok {
+			switch stack.(type) {
+			case map[string]interface{}:
+				log.InfoMapWithTrace(ctx.Request.Context(), stack.(map[string]interface{}), "Program Panic")
+			}
+		}
 	}
 
 	ctx.JSON(httpStatus, res)
