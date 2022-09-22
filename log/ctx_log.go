@@ -31,8 +31,8 @@ func InfoWithTrace(ctx context.Context, format string, args ...interface{}) {
 	log.WithFields(getTraceField(ctx)).Info(msg)
 }
 
-// InfoMapWithTrace info增加map信息到日志
-func InfoMapWithTrace(ctx context.Context, infos map[string]interface{}, format string, args ...interface{}) {
+// InfoFieldsWithTrace info增加map信息到日志
+func InfoFieldsWithTrace(ctx context.Context, infos logrus.Fields, format string, args ...interface{}) {
 	fields := getTraceField(ctx)
 	for k, v := range infos {
 		fields[k] = v
@@ -47,8 +47,8 @@ func WarnWithTrace(ctx context.Context, format string, args ...interface{}) {
 	log.WithFields(getTraceField(ctx)).Warn(msg)
 }
 
-// WarnMapWithTrace warn增加map信息到日志
-func WarnMapWithTrace(ctx context.Context, infos map[string]interface{}, format string, args ...interface{}) {
+// WarnFieldsWithTrace warn增加map信息到日志
+func WarnFieldsWithTrace(ctx context.Context, infos logrus.Fields, format string, args ...interface{}) {
 	fields := getTraceField(ctx)
 	for k, v := range infos {
 		fields[k] = v
@@ -76,8 +76,8 @@ func ErrorWithTrace(ctx context.Context, err error, format string, args ...inter
 	log.WithFields(fields).Error(msg)
 }
 
-// ErrorMapWithTrace error增加map信息到日志
-func ErrorMapWithTrace(ctx context.Context, infos map[string]interface{}, err error, format string, args ...interface{}) {
+// ErrorFieldsWithTrace error增加map信息到日志
+func ErrorFieldsWithTrace(ctx context.Context, infos logrus.Fields, err error, format string, args ...interface{}) {
 	fields := getTraceField(ctx)
 	fields["msg"] = err.Error()
 	for k, v := range infos {

@@ -40,7 +40,13 @@ func Infof(format string, args ...interface{}) {
 	}).Info(fmt.Sprintf(format, args...))
 }
 
-// Warn warn log
+// InfoFields 格式化输出info log
+func InfoFields(fields logrus.Fields, args ...interface{}) {
+	fields["type"] = Type
+	log.WithFields(fields).Info(args)
+}
+
+// Warn warnlog
 func Warn(args ...interface{}) {
 	log.WithFields(logrus.Fields{
 		"type": Type,
@@ -52,6 +58,12 @@ func Warnf(format string, args ...interface{}) {
 	log.WithFields(logrus.Fields{
 		"type": Type,
 	}).Warn(fmt.Sprintf(format, args...))
+}
+
+// WarnFields warnlog
+func WarnFields(fields logrus.Fields, args ...interface{}) {
+	fields["type"] = Type
+	log.WithFields(fields).Warn(args)
 }
 
 // Error 打印错误对象
@@ -70,6 +82,12 @@ func Errorf(format string, args ...interface{}) {
 		"type":  Type,
 		"stack": err.ErrorStack(),
 	}).Error(args...)
+}
+
+// ErrorFields errorlog
+func ErrorFields(fields logrus.Fields, args ...interface{}) {
+	fields["type"] = Type
+	log.WithFields(fields).Error(args)
 }
 
 // LineFormatter ...
@@ -119,15 +137,18 @@ func Setup() {
 	log.SetReportCaller(true)
 	log.SetFormatter(&LineFormatter{TimestampFormat: DefaultTimestampFormat})
 
-	writer := GetProjectIoWriter()
-	writers := []io.Writer{writer}
+	//writer := GetProjectIoWriter()
+	//writers := []io.Writer{writer}
+	//
+	//// Local development output to the console
+	//if config.Get().App.ShowTrace {
+	//	writers = append(writers, os.Stdout)
+	//}
 
-	// Local development output to the console
-	if config.Get().App.ShowTrace {
-		writers = append(writers, os.Stdout)
-	}
+	// log.SetOutput(io.MultiWriter(writers...))
 
-	log.SetOutput(io.MultiWriter(writers...))
+	// output console
+	log.SetOutput(os.Stdout)
 	log.SetFormatter(&LineFormatter{TimestampFormat: DefaultTimestampFormat})
 	//log.SetFormatter(&log.JSONFormatter{TimestampFormat: DefaultTimestampFormat})
 
