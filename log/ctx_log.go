@@ -40,6 +40,15 @@ func InfoFieldsWithTrace(ctx context.Context, infos logrus.Fields, format string
 	log.WithFields(fields).Infof(format, args...)
 }
 
+// InfoMapWithTrace info增加map信息到日志
+func InfoMapWithTrace(ctx context.Context, infos map[string]interface{}, format string, args ...interface{}) {
+	fields := getTraceField(ctx)
+	for k, v := range infos {
+		fields[k] = v
+	}
+	log.WithFields(fields).Infof(format, args...)
+}
+
 // WarnWithTrace warn增加traceId
 func WarnWithTrace(ctx context.Context, format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
