@@ -29,8 +29,8 @@ func init() {
 	var stopChan = make(chan os.Signal, 2)
 	signal.Notify(stopChan, syscall.SIGTERM)
 
-	go tracer(stopChan)
-	go detectIstio()
+	//go tracer(stopChan)
+	//go detectIstio()
 	parsePropagateHeaders()
 }
 

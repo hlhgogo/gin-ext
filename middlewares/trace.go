@@ -6,6 +6,7 @@ import (
 	"github.com/hlhgogo/gin-ext/app"
 	athCtx "github.com/hlhgogo/gin-ext/context"
 	"github.com/hlhgogo/gin-ext/log"
+	"github.com/hlhgogo/gin-ext/tracing"
 	"github.com/satori/go.uuid"
 )
 
@@ -21,6 +22,11 @@ func (r responseBodyWriter) Write(b []byte) (int, error) {
 
 func Trace() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		span, _ := tracing.Extract(c.Request)
+		ctx := span.ContextWithSpan(c.Request.Context())
+
+		c.Request = c.Request.WithContext(ctx)
 
 		// bind request id
 		requestId := c.Request.Header.Get("X-Request-Id")
