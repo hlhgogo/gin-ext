@@ -24,10 +24,10 @@ func Recovery() gin.HandlerFunc {
 			if err := recover(); err != nil {
 				stk := Stack(3, err)
 				c.Set("Stack", stk)
+				log.InfoMapWithTrace(c, stk, "Program Panic")
 				switch err := err.(type) {
 				case error:
 					extend.SendData(c, nil, err)
-					log.InfoMapWithTrace(c, stk, "Program Panic")
 				default:
 					resErr := errors.NewErr("Unknown error")
 					extend.SendData(c, nil, resErr)
