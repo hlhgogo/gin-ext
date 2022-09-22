@@ -110,6 +110,8 @@ func SendData(ctx *gin.Context, resData interface{}, pErr error) {
 			case map[string]interface{}:
 				log.InfoMapWithTrace(ctx.Request.Context(), stack.(map[string]interface{}), "Program Panic")
 			}
+		} else {
+			log.ErrorWithTrace(ctx.Request.Context(), pErr, "Program Logic Error")
 		}
 	}
 

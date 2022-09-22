@@ -7,6 +7,7 @@ import (
 	"github.com/go-errors/errors"
 	athCtx "github.com/hlhgogo/gin-ext/context"
 	"github.com/sirupsen/logrus"
+	"strings"
 	"time"
 )
 
@@ -73,10 +74,10 @@ func ErrorWithTrace(ctx context.Context, err error, format string, args ...inter
 	fields["msg"] = err.Error()
 	switch err := err.(type) {
 	case *errors.Error:
-		fields["stack"] = err.ErrorStack()
+		fields["stack"] = strings.Split("\n", err.ErrorStack())
 	default:
 		newErr := errors.Wrap(fmt.Sprintf(format, args...), 1)
-		fields["stack"] = newErr.ErrorStack()
+		fields["stack"] = strings.Split("\n", newErr.ErrorStack())
 	}
 
 	msg := fmt.Sprintf(format, args...)
