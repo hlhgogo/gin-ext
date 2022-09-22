@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
+	goError "github.com/go-errors/errors"
 	"github.com/hlhgogo/config"
 	athCtx "github.com/hlhgogo/gin-ext/context"
 	"github.com/hlhgogo/gin-ext/errors"
 	"github.com/hlhgogo/gin-ext/log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -60,6 +62,23 @@ func SendData(ctx *gin.Context, resData interface{}, pErr error) {
 			if msg := e.Message(); msg != "" {
 				res.Msg = msg
 			}
+
+			var debug interface{}
+			if stack, ok := ctx.Get("Stack"); ok {
+				debug = stack
+			} else {
+				if pErr != nil {
+					switch err := pErr.(type) {
+					case *goError.Error:
+						debug = strings.Split(err.ErrorStack(), "\n")
+					}
+				}
+			}
+
+			if config.Get().App.ShowTrace {
+				res.Debug = debug
+			}
+
 		} else if e, ok := pErr.(*errors.BadRequestError); ok {
 			httpStatus = http.StatusBadRequest
 			if code := e.Code(); code != 0 {
@@ -101,18 +120,6 @@ func SendData(ctx *gin.Context, resData interface{}, pErr error) {
 	// 记录响应日志
 	if responseByte, err := json.Marshal(res); err == nil {
 		log.InfoWithTrace(ctx.Request.Context(), "Response:%s", string(responseByte))
-	}
-
-	// 记录错误并上报
-	if pErr != nil {
-		if stack, ok := ctx.Get("Stack"); ok {
-			switch stack.(type) {
-			case map[string]interface{}:
-				log.InfoMapWithTrace(ctx.Request.Context(), stack.(map[string]interface{}), "Program Panic")
-			}
-		} else {
-			log.ErrorWithTrace(ctx.Request.Context(), pErr, "Program Logic Error")
-		}
 	}
 
 	ctx.JSON(httpStatus, res)

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hlhgogo/gin-ext/errors"
 	"github.com/hlhgogo/gin-ext/extend"
+	"github.com/hlhgogo/gin-ext/log"
 	"runtime"
 	"runtime/debug"
 	"strings"
@@ -21,10 +22,12 @@ func Recovery() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
-				c.Set("Stack", Stack(3, err))
+				stk := Stack(3, err)
+				c.Set("Stack", stk)
 				switch err := err.(type) {
 				case error:
 					extend.SendData(c, nil, err)
+					log.InfoMapWithTrace(c, stk, "Program Panic")
 				default:
 					resErr := errors.NewErr("Unknown error")
 					extend.SendData(c, nil, resErr)

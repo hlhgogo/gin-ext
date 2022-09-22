@@ -74,10 +74,10 @@ func ErrorWithTrace(ctx context.Context, err error, format string, args ...inter
 	fields["msg"] = err.Error()
 	switch err := err.(type) {
 	case *errors.Error:
-		fields["stack"] = strings.Split("\n", err.ErrorStack())
+		fields["stack"] = strings.Split(err.ErrorStack(), "\n")
 	default:
 		newErr := errors.Wrap(fmt.Sprintf(format, args...), 1)
-		fields["stack"] = strings.Split("\n", newErr.ErrorStack())
+		fields["stack"] = strings.Split(newErr.ErrorStack(), "\n")
 	}
 
 	msg := fmt.Sprintf(format, args...)
